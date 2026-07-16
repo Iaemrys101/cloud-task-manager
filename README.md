@@ -51,7 +51,17 @@ The goal is to understand the system well enough to explain it in an interview, 
 
 ## Current Status
 
-Day 1 is focused on project planning and architecture.
+Day 2 is focused on the local FastAPI backend.
 
 No AWS resources are created yet, so the current AWS cost is 0.
 
+## Repository Structure
+
+```text
+backend/
+  app/
+    main.py
+  tests/
+docs/
+README.md
+```
