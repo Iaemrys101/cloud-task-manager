@@ -1,0 +1,64 @@
+name: Feature request
+description: Propose an improvement to the application or platform
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: dropdown
+    id: component
+    attributes:
+      label: Affected component
+      description: Which area would this improvement affect?
+      options:
+        - Backend API
+        - Docker
+        - Terraform
+        - CI/CD
+        - AWS infrastructure
+        - Documentation
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or opportunity
+      description: Describe the need this feature would address.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Explain the desired behaviour without prescribing unnecessary implementation details.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: List the observable conditions that would make this feature complete.
+      placeholder: |
+        - The user can complete the workflow
+        - Errors are handled clearly
+        - Documentation is updated
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Describe other approaches or workarounds you considered.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-submission checklist
+      options:
+        - label: I searched existing issues for a similar request.
+          required: true
+        - label: I considered the security and AWS cost impact.
+          required: true

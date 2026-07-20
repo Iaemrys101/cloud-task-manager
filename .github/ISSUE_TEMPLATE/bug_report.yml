@@ -1,0 +1,58 @@
+name: Bug report
+description: Report a reproducible problem
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: dropdown
+    id: component
+    attributes:
+      label: Affected component
+      description: Which part of the project has the problem?
+      options:
+        - Backend API
+        - Docker
+        - Terraform
+        - CI/CD
+        - AWS infrastructure
+        - Documentation
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem description
+      description: Explain what happened and what you expected instead.
+      placeholder: Include the actual result and the expected result.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: List the exact actions that consistently trigger the problem.
+      placeholder: |
+        1. Start the service
+        2. Send the request
+        3. Observe the error
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Logs and evidence
+      description: Paste relevant logs or screenshots after removing secrets and personal data.
+      render: shell
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-submission checklist
+      options:
+        - label: I searched existing issues for the same problem.
+          required: true
+        - label: I removed secrets and sensitive information from this report.
+          required: true
