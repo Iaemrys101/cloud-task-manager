@@ -106,9 +106,9 @@ The application will run inside a VPC.
 
 Planned subnet model:
 
-- Public subnets: load balancer and internet-facing routing.
-- Private application subnets: ECS tasks.
-- Private database subnets: RDS database.
+- Two public subnets across two Availability Zones for the load balancer and internet-facing routing.
+- Two private subnets across two Availability Zones for ECS tasks and RDS.
+- Separate security groups isolate the load balancer, application, and database tiers.
 
 The database will not be publicly accessible.
 
@@ -127,4 +127,3 @@ No AWS resources are created on Day 1.
 Current estimated AWS cost: 0.
 
 Before creating AWS resources in later stages, we will review purpose, cost, Free Tier eligibility, cleanup steps, and Terraform destroy steps.
-
