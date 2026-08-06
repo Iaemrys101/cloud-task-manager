@@ -102,9 +102,9 @@ Why it matters: engineers and security teams need audit logs showing who changed
 
 ## Network Design
 
-The application will run inside a VPC.
+The application network is managed by Terraform in `eu-west-2`.
 
-Planned subnet model:
+Implemented subnet model:
 
 - Two public subnets across two Availability Zones for the load balancer and internet-facing routing.
 - Two private subnets across two Availability Zones for ECS tasks and RDS.
@@ -120,10 +120,20 @@ Security group direction:
 - ECS tasks can reach S3 and Secrets Manager as required.
 - No direct public access to RDS.
 
-## Day 1 Cost Position
+## Infrastructure Management
 
-No AWS resources are created on Day 1.
+Terraform is organized into environment root modules and reusable child modules. Development state is stored in a protected, versioned, encrypted S3 backend with S3-native state locking.
 
-Current estimated AWS cost: 0.
+The current Terraform-managed foundation includes:
 
-Before creating AWS resources in later stages, we will review purpose, cost, Free Tier eligibility, cleanup steps, and Terraform destroy steps.
+- An account-wide S3 state bucket.
+- One development VPC across two Availability Zones.
+- Two public and two private subnets.
+- Public and private routing with no NAT gateway.
+- Separate load balancer and API security groups.
+
+## Current Cost Position
+
+No load balancer, ECS service, RDS database, NAT gateway, or paid public IPv4 address is deployed yet. The S3 state bucket incurs usage-based storage and request charges, and the AWS budget remains the main cost guardrail.
+
+Before each later stage, purpose, cost, security impact, verification, and cleanup will be reviewed before deployment.
