@@ -14,6 +14,7 @@ flowchart TD
     Internet[Internet]
     Route53[Amazon Route53]
     ACM[AWS Certificate Manager]
+    ECR[Amazon ECR]
     ALB[Application Load Balancer]
     ECS[ECS Fargate Service]
     Backend[FastAPI Backend Container]
@@ -28,6 +29,7 @@ flowchart TD
     Internet --> Route53
     Route53 --> ALB
     ACM --> ALB
+    ECR --> ECS
     ALB --> ECS
     ECS --> Backend
     Backend --> RDS
@@ -63,6 +65,12 @@ Why it matters: the load balancer gives us health checks, routing, TLS terminati
 ECS Fargate will run the containerized FastAPI backend without us managing EC2 servers.
 
 Why it matters: Fargate is a managed container platform. It lets us focus on service deployment, scaling, health checks, logs, and networking.
+
+### Amazon ECR
+
+ECR stores immutable backend container images and scans them for known vulnerabilities before deployment.
+
+Why it matters: production deployments need a private, versioned source of container artifacts rather than images built manually on a server.
 
 ### Amazon RDS PostgreSQL
 
@@ -131,9 +139,12 @@ The current Terraform-managed foundation includes:
 - Two public and two private subnets.
 - Public and private routing with no NAT gateway.
 - Separate load balancer and API security groups.
+- An encrypted ECR repository with immutable tags, scan-on-push, and lifecycle cleanup.
+
+The ECS runtime has also been proven through an opt-in Terraform deployment. It includes an Application Load Balancer, private Fargate tasks, separate execution and task roles, CloudWatch logging, and the private ECR, Logs, and S3 network paths required without a NAT gateway. The runtime is disabled by default so hourly billed resources exist only during planned exercises.
 
 ## Current Cost Position
 
-No load balancer, ECS service, RDS database, NAT gateway, or paid public IPv4 address is deployed yet. The S3 state bucket incurs usage-based storage and request charges, and the AWS budget remains the main cost guardrail.
+No load balancer, ECS service, interface VPC endpoints, RDS database, NAT gateway, or paid public IPv4 address is currently deployed. The S3 state bucket and ECR image incur usage-based storage and request charges, and the AWS budget remains the main cost guardrail.
 
 Before each later stage, purpose, cost, security impact, verification, and cleanup will be reviewed before deployment.

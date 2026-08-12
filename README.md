@@ -51,9 +51,16 @@ The goal is to understand the system well enough to explain it in an interview, 
 
 ## Current Status
 
-Day 2 is focused on the local FastAPI backend.
+Day 7 established the AWS container deployment path:
 
-No AWS resources are created yet, so the current AWS cost is 0.
+- The FastAPI backend is packaged as a tested Alpine container image.
+- Amazon ECR stores immutable images and scans every push.
+- Terraform can deploy the image to private ECS Fargate tasks behind an Application Load Balancer.
+- CloudWatch receives application logs and ECS Container Insights.
+- The deployed service was health-checked successfully and then destroyed to stop hourly runtime charges.
+- The current ECR image has zero findings in ECR Basic Scanning.
+
+The persistent AWS footprint is limited to the Terraform state bucket, ECR image storage, and the no-hourly-charge network foundation. The ECS runtime is disabled by default.
 
 ## Repository Structure
 
@@ -63,5 +70,10 @@ backend/
     main.py
   tests/
 docs/
+infrastructure/
+  bootstrap/
+  environments/
+  modules/
+.github/
 README.md
 ```
