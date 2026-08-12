@@ -3,6 +3,17 @@ variable "environment" {
   type        = string
 }
 
+variable "aws_region" {
+  description = "AWS Region used to construct regional VPC endpoint service names."
+  type        = string
+}
+
+variable "enable_container_endpoints" {
+  description = "Whether to create private AWS service endpoints required by ECS tasks."
+  type        = bool
+  default     = false
+}
+
 variable "project_name" {
   description = "Project name used when naming network resources."
   type        = string

@@ -21,6 +21,23 @@ variable "environment" {
   }
 }
 
+variable "deploy_container_runtime" {
+  description = "Whether to deploy the billable ECS, ALB, logging, and VPC endpoint runtime."
+  type        = bool
+  default     = false
+}
+
+variable "container_image_tag" {
+  description = "Immutable ECR image tag deployed by the ECS service."
+  type        = string
+  default     = ""
+
+  validation {
+    condition     = !var.deploy_container_runtime || length(trimspace(var.container_image_tag)) > 0
+    error_message = "container_image_tag must be set when deploy_container_runtime is true."
+  }
+}
+
 variable "vpc_cidr" {
   description = "IPv4 CIDR block assigned to the development VPC."
   type        = string

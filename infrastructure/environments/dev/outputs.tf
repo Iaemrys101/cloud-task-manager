@@ -37,3 +37,28 @@ output "api_security_group_id" {
   description = "ID of the development API security group."
   value       = module.network.api_security_group_id
 }
+
+output "ecr_repository_name" {
+  description = "Name of the development backend ECR repository."
+  value       = module.container_registry.repository_name
+}
+
+output "ecr_repository_url" {
+  description = "URL used to tag and push development backend images."
+  value       = module.container_registry.repository_url
+}
+
+output "ecs_cluster_name" {
+  description = "Name of the ECS cluster when the container runtime is deployed."
+  value       = try(module.container_service[0].cluster_name, null)
+}
+
+output "ecs_service_name" {
+  description = "Name of the ECS service when the container runtime is deployed."
+  value       = try(module.container_service[0].service_name, null)
+}
+
+output "application_url" {
+  description = "Temporary HTTP URL of the development load balancer."
+  value       = try("http://${module.container_service[0].load_balancer_dns_name}", null)
+}
