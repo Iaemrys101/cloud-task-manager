@@ -10,6 +10,9 @@ The application is simple, but the infrastructure is designed to show profession
 
 ```mermaid
 flowchart TD
+    Developer[Developer]
+    GitHub[GitHub Actions CI/CD]
+    IAM[AWS IAM OIDC Role]
     User[User Browser]
     Internet[Internet]
     Route53[Amazon Route53]
@@ -25,6 +28,9 @@ flowchart TD
     SNS[Amazon SNS Alerts]
     CT[AWS CloudTrail]
 
+    Developer --> GitHub
+    GitHub --> IAM
+    IAM --> ECR
     User --> Internet
     Internet --> Route53
     Route53 --> ALB
@@ -71,6 +77,12 @@ Why it matters: Fargate is a managed container platform. It lets us focus on ser
 ECR stores immutable backend container images and scans them for known vulnerabilities before deployment.
 
 Why it matters: production deployments need a private, versioned source of container artifacts rather than images built manually on a server.
+
+### GitHub Actions And AWS OIDC
+
+GitHub Actions validates pull requests and publishes approved backend images to ECR. AWS OIDC exchanges GitHub identity tokens for short-lived IAM role credentials.
+
+Why it matters: automated checks make changes repeatable, while temporary least-privilege credentials avoid storing permanent AWS access keys in GitHub.
 
 ### Amazon RDS PostgreSQL
 
@@ -140,11 +152,14 @@ The current Terraform-managed foundation includes:
 - Public and private routing with no NAT gateway.
 - Separate load balancer and API security groups.
 - An encrypted ECR repository with immutable tags, scan-on-push, and lifecycle cleanup.
+- A GitHub OIDC provider and a `main`-branch publishing role restricted to the backend ECR repository.
+
+GitHub Actions runs backend tests, Terraform validation, and a Docker build on pull requests. After an approved merge to `main`, a separate workflow can publish the commit-tagged backend image to ECR without enabling the ECS runtime.
 
 The ECS runtime has also been proven through an opt-in Terraform deployment. It includes an Application Load Balancer, private Fargate tasks, separate execution and task roles, CloudWatch logging, and the private ECR, Logs, and S3 network paths required without a NAT gateway. The runtime is disabled by default so hourly billed resources exist only during planned exercises.
 
 ## Current Cost Position
 
-No load balancer, ECS service, interface VPC endpoints, RDS database, NAT gateway, or paid public IPv4 address is currently deployed. The S3 state bucket and ECR image incur usage-based storage and request charges, and the AWS budget remains the main cost guardrail.
+No load balancer, ECS service, interface VPC endpoints, RDS database, NAT gateway, or paid public IPv4 address is currently deployed. IAM and OIDC resources have no hourly charge. The S3 state bucket and ECR images incur usage-based storage and request charges, and the AWS budget remains the main cost guardrail.
 
 Before each later stage, purpose, cost, security impact, verification, and cleanup will be reviewed before deployment.
