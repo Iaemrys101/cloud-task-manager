@@ -17,6 +17,19 @@ module "container_registry" {
   environment  = var.environment
 }
 
+module "github_actions_oidc" {
+  source = "../../modules/github_actions_oidc"
+
+  project_name               = var.project_name
+  environment                = var.environment
+  github_repository_owner    = var.github_repository_owner
+  github_repository_owner_id = var.github_repository_owner_id
+  github_repository_name     = var.github_repository_name
+  github_repository_id       = var.github_repository_id
+  github_branch              = var.github_publish_branch
+  ecr_repository_arn         = module.container_registry.repository_arn
+}
+
 module "container_service" {
   count  = var.deploy_container_runtime ? 1 : 0
   source = "../../modules/container_service"

@@ -48,6 +48,11 @@ output "ecr_repository_url" {
   value       = module.container_registry.repository_url
 }
 
+output "github_actions_role_arn" {
+  description = "IAM role assumed by GitHub Actions through OIDC."
+  value       = module.github_actions_oidc.role_arn
+}
+
 output "ecs_cluster_name" {
   description = "Name of the ECS cluster when the container runtime is deployed."
   value       = try(module.container_service[0].cluster_name, null)

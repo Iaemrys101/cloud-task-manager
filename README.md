@@ -51,16 +51,16 @@ The goal is to understand the system well enough to explain it in an interview, 
 
 ## Current Status
 
-Day 7 established the AWS container deployment path:
+Day 8 established the automated integration and container delivery path:
 
-- The FastAPI backend is packaged as a tested Alpine container image.
+- Pull requests automatically run backend tests, Terraform checks, and a Docker build.
+- GitHub Actions authenticates to AWS through OIDC instead of permanent access keys.
+- The AWS trust policy is restricted to this repository's immutable identity and the `main` branch.
+- The publishing role has permission only to upload images to the project ECR repository.
+- Approved backend images are built for `linux/amd64` and tagged with their full Git commit SHA.
 - Amazon ECR stores immutable images and scans every push.
-- Terraform can deploy the image to private ECS Fargate tasks behind an Application Load Balancer.
-- CloudWatch receives application logs and ECS Container Insights.
-- The deployed service was health-checked successfully and then destroyed to stop hourly runtime charges.
-- The current ECR image has zero findings in ECR Basic Scanning.
 
-The persistent AWS footprint is limited to the Terraform state bucket, ECR image storage, and the no-hourly-charge network foundation. The ECS runtime is disabled by default.
+Terraform can still deploy a selected image to private ECS Fargate tasks behind an Application Load Balancer, but the runtime remains disabled by default. The persistent AWS footprint is limited to the Terraform state bucket, ECR image storage, IAM/OIDC resources, and the no-hourly-charge network foundation.
 
 ## Repository Structure
 
