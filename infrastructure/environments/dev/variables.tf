@@ -21,6 +21,36 @@ variable "environment" {
   }
 }
 
+variable "github_repository_owner" {
+  description = "GitHub account that owns the project repository."
+  type        = string
+  default     = "Iaemrys101"
+}
+
+variable "github_repository_owner_id" {
+  description = "Immutable numeric ID of the GitHub repository owner."
+  type        = string
+  default     = "278219135"
+}
+
+variable "github_repository_name" {
+  description = "GitHub repository allowed to publish backend images."
+  type        = string
+  default     = "cloud-task-manager"
+}
+
+variable "github_repository_id" {
+  description = "Immutable numeric ID of the GitHub repository."
+  type        = string
+  default     = "1302127730"
+}
+
+variable "github_publish_branch" {
+  description = "GitHub branch allowed to obtain AWS publishing credentials."
+  type        = string
+  default     = "main"
+}
+
 variable "deploy_container_runtime" {
   description = "Whether to deploy the billable ECS, ALB, logging, and VPC endpoint runtime."
   type        = bool
