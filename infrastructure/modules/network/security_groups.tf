@@ -48,10 +48,26 @@ resource "aws_vpc_security_group_ingress_rule" "api_from_alb" {
   to_port     = 8000
 }
 
-resource "aws_vpc_security_group_egress_rule" "api_all" {
-  security_group_id = aws_security_group.api.id
-  description       = "Allow outbound traffic from the API service."
+resource "aws_vpc_security_group_egress_rule" "api_to_service_endpoints" {
+  count = var.enable_container_endpoints ? 1 : 0
 
-  cidr_ipv4   = "0.0.0.0/0"
-  ip_protocol = "-1"
+  security_group_id            = aws_security_group.api.id
+  referenced_security_group_id = aws_security_group.service_endpoints[0].id
+  description                  = "Allow the API to reach private AWS service endpoints over HTTPS."
+
+  from_port   = 443
+  ip_protocol = "tcp"
+  to_port     = 443
+}
+
+resource "aws_vpc_security_group_egress_rule" "api_to_s3" {
+  count = var.enable_container_endpoints ? 1 : 0
+
+  security_group_id = aws_security_group.api.id
+  prefix_list_id    = aws_vpc_endpoint.s3[0].prefix_list_id
+  description       = "Allow the API to retrieve ECR image layers from S3 over HTTPS."
+
+  from_port   = 443
+  ip_protocol = "tcp"
+  to_port     = 443
 }

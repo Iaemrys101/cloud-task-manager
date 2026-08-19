@@ -51,14 +51,14 @@ The goal is to understand the system well enough to explain it in an interview, 
 
 ## Current Status
 
-Day 8 established the automated integration and container delivery path:
+Day 9 hardened the application supply chain and container runtime:
 
-- Pull requests automatically run backend tests, Terraform checks, and a Docker build.
-- GitHub Actions authenticates to AWS through OIDC instead of permanent access keys.
-- The AWS trust policy is restricted to this repository's immutable identity and the `main` branch.
-- The publishing role has permission only to upload images to the project ECR repository.
-- Approved backend images are built for `linux/amd64` and tagged with their full Git commit SHA.
-- Amazon ECR stores immutable images and scans every push.
+- The backend container runs as dedicated numeric user and group `10001` instead of root.
+- The ECS task definition independently enforces the same non-root identity, a read-only root filesystem, and no Linux capabilities.
+- Pull requests audit production Python dependencies for known vulnerabilities.
+- The ECS execution role is limited to pulling from the backend ECR repository and writing to its log group.
+- Private task egress is limited to the ECR, CloudWatch Logs, and S3 endpoint paths required to start the service.
+- The project threat model documents trust boundaries, OWASP considerations, mitigations, and residual risks.
 
 Terraform can still deploy a selected image to private ECS Fargate tasks behind an Application Load Balancer, but the runtime remains disabled by default. The persistent AWS footprint is limited to the Terraform state bucket, ECR image storage, IAM/OIDC resources, and the no-hourly-charge network foundation.
 

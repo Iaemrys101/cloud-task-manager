@@ -42,6 +42,7 @@ module "container_service" {
   private_subnet_ids    = values(module.network.private_subnet_ids)
   alb_security_group_id = module.network.alb_security_group_id
   api_security_group_id = module.network.api_security_group_id
+  ecr_repository_arn    = module.container_registry.repository_arn
   container_image       = "${module.container_registry.repository_url}:${var.container_image_tag}"
 
   depends_on = [module.network]
