@@ -48,6 +48,11 @@ variable "api_security_group_id" {
   type        = string
 }
 
+variable "ecr_repository_arn" {
+  description = "ARN of the ECR repository that the execution role may pull from."
+  type        = string
+}
+
 variable "container_image" {
   description = "Complete ECR image reference, including its immutable tag."
   type        = string

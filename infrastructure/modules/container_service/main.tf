@@ -45,6 +45,7 @@ resource "aws_ecs_task_definition" "backend" {
       name                   = local.container_name
       image                  = var.container_image
       essential              = true
+      user                   = "10001:10001"
       readonlyRootFilesystem = true
       stopTimeout            = 30
 
@@ -67,6 +68,9 @@ resource "aws_ecs_task_definition" "backend" {
 
       linuxParameters = {
         initProcessEnabled = true
+        capabilities = {
+          drop = ["ALL"]
+        }
       }
 
       logConfiguration = {
@@ -81,7 +85,7 @@ resource "aws_ecs_task_definition" "backend" {
     }
   ])
 
-  depends_on = [aws_iam_role_policy_attachment.execution]
+  depends_on = [aws_iam_role_policy.execution]
 
   tags = {
     Name = local.service_name

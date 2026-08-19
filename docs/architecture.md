@@ -156,7 +156,27 @@ The current Terraform-managed foundation includes:
 
 GitHub Actions runs backend tests, Terraform validation, and a Docker build on pull requests. After an approved merge to `main`, a separate workflow can publish the commit-tagged backend image to ECR without enabling the ECS runtime.
 
-The ECS runtime has also been proven through an opt-in Terraform deployment. It includes an Application Load Balancer, private Fargate tasks, separate execution and task roles, CloudWatch logging, and the private ECR, Logs, and S3 network paths required without a NAT gateway. The runtime is disabled by default so hourly billed resources exist only during planned exercises.
+The ECS runtime has also been proven through an opt-in Terraform deployment. It includes an Application Load Balancer, private Fargate tasks, separate execution and task roles, CloudWatch logging, and the private ECR, Logs, and S3 network paths required without a NAT gateway. The execution role uses a project-managed least-privilege policy instead of a broad managed policy. The runtime is disabled by default so hourly billed resources exist only during planned exercises.
+
+## Security Architecture
+
+Security controls are applied at several independent layers:
+
+- GitHub branch rules and required CI checks protect changes before merge.
+- GitHub OIDC provides temporary AWS credentials without stored access keys.
+- The publishing role can push only to the backend ECR repository.
+- Production Python dependencies are audited for known vulnerabilities in CI.
+- ECR uses immutable tags, encryption, scan-on-push, and lifecycle cleanup.
+- The Docker image and ECS task both enforce numeric non-root user `10001`.
+- The ECS container uses a read-only root filesystem and drops all Linux capabilities.
+- The task role grants no AWS API permissions because the current application needs none.
+- The execution role can pull only the backend image and write only to the backend log group.
+- Private task egress is restricted to the AWS endpoints required for image pulls and logging.
+- Terraform state is encrypted, versioned, blocked from public access, and requires TLS.
+
+The target production entry point uses Route53, ACM, and HTTPS. The current temporary proof-of-deployment listener uses HTTP and is not considered production-ready. Database credentials, Secrets Manager integration, encrypted RDS, authentication, CloudTrail retention, and backup controls will be implemented with the services that require them.
+
+The detailed threat analysis is maintained in `docs/threat-model.md`.
 
 ## Current Cost Position
 
