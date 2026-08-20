@@ -51,16 +51,15 @@ The goal is to understand the system well enough to explain it in an interview, 
 
 ## Current Status
 
-Day 9 hardened the application supply chain and container runtime:
+Day 10 added an operational monitoring design for the optional ECS runtime:
 
-- The backend container runs as dedicated numeric user and group `10001` instead of root.
-- The ECS task definition independently enforces the same non-root identity, a read-only root filesystem, and no Linux capabilities.
-- Pull requests audit production Python dependencies for known vulnerabilities.
-- The ECS execution role is limited to pulling from the backend ECR repository and writing to its log group.
-- Private task egress is limited to the ECR, CloudWatch Logs, and S3 endpoint paths required to start the service.
-- The project threat model documents trust boundaries, OWASP considerations, mitigations, and residual risks.
+- A CloudWatch dashboard combines alarm status, ECS capacity, requests, errors, latency, target health, and recent error logs.
+- CloudWatch alarms cover sustained CPU, memory, latency, target HTTP 5xx responses, and unhealthy load balancer targets.
+- An encrypted SNS topic receives alarm and recovery notifications through a restricted topic policy.
+- The backend alert-response runbook explains investigation, mitigation, recovery verification, and escalation.
+- Missing metrics are treated as healthy while the intentionally disabled development runtime is absent.
 
-Terraform can still deploy a selected image to private ECS Fargate tasks behind an Application Load Balancer, but the runtime remains disabled by default. The persistent AWS footprint is limited to the Terraform state bucket, ECR image storage, IAM/OIDC resources, and the no-hourly-charge network foundation.
+The monitoring module uses the same opt-in switch as the ECS runtime. Terraform validation passed, the default plan reported no changes, and an enabled plan successfully modeled 26 additions without applying them. No new AWS resources were created, so the persistent footprint remains limited to the Terraform state bucket, ECR image storage, IAM/OIDC resources, and the no-hourly-charge network foundation.
 
 ## Repository Structure
 

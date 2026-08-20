@@ -47,3 +47,17 @@ module "container_service" {
 
   depends_on = [module.network]
 }
+
+module "monitoring" {
+  count  = var.deploy_container_runtime ? 1 : 0
+  source = "../../modules/monitoring"
+
+  project_name             = var.project_name
+  environment              = var.environment
+  aws_region               = var.aws_region
+  ecs_cluster_name         = module.container_service[0].cluster_name
+  ecs_service_name         = module.container_service[0].service_name
+  load_balancer_arn_suffix = module.container_service[0].load_balancer_arn_suffix
+  target_group_arn_suffix  = module.container_service[0].target_group_arn_suffix
+  log_group_name           = module.container_service[0].log_group_name
+}

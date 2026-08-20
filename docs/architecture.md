@@ -104,7 +104,7 @@ Why it matters: secrets should not be committed to Git, stored in Docker images,
 
 ### CloudWatch
 
-CloudWatch will collect logs, metrics, alarms, and dashboards.
+CloudWatch collects backend logs and AWS service metrics. The Terraform monitoring module defines an operations dashboard and alarms for ECS CPU, ECS memory, load balancer latency, target HTTP 5xx responses, and unhealthy targets.
 
 Why it matters: engineers need visibility into failures, performance, availability, and application behavior.
 
@@ -158,6 +158,8 @@ GitHub Actions runs backend tests, Terraform validation, and a Docker build on p
 
 The ECS runtime has also been proven through an opt-in Terraform deployment. It includes an Application Load Balancer, private Fargate tasks, separate execution and task roles, CloudWatch logging, and the private ECR, Logs, and S3 network paths required without a NAT gateway. The execution role uses a project-managed least-privilege policy instead of a broad managed policy. The runtime is disabled by default so hourly billed resources exist only during planned exercises.
 
+The monitoring module follows the same opt-in lifecycle as the runtime. When enabled, it creates an encrypted SNS alert topic, five CloudWatch alarms, and an eight-hour operations dashboard containing service capacity, traffic, errors, latency, target health, alarm state, and recent error logs. The alert-response runbook maps each alarm to investigation and recovery steps.
+
 ## Security Architecture
 
 Security controls are applied at several independent layers:
@@ -180,6 +182,6 @@ The detailed threat analysis is maintained in `docs/threat-model.md`.
 
 ## Current Cost Position
 
-No load balancer, ECS service, interface VPC endpoints, RDS database, NAT gateway, or paid public IPv4 address is currently deployed. IAM and OIDC resources have no hourly charge. The S3 state bucket and ECR images incur usage-based storage and request charges, and the AWS budget remains the main cost guardrail.
+No load balancer, ECS service, interface VPC endpoints, CloudWatch dashboard, CloudWatch alarms, RDS database, NAT gateway, or paid public IPv4 address is currently deployed. IAM and OIDC resources have no hourly charge. The S3 state bucket and ECR images incur usage-based storage and request charges, and the AWS budget remains the main cost guardrail.
 
 Before each later stage, purpose, cost, security impact, verification, and cleanup will be reviewed before deployment.

@@ -67,3 +67,18 @@ output "application_url" {
   description = "Temporary HTTP URL of the development load balancer."
   value       = try("http://${module.container_service[0].load_balancer_dns_name}", null)
 }
+
+output "monitoring_dashboard_name" {
+  description = "Name of the CloudWatch operations dashboard when monitoring is deployed."
+  value       = try(module.monitoring[0].dashboard_name, null)
+}
+
+output "monitoring_alert_topic_arn" {
+  description = "ARN of the SNS alert topic when monitoring is deployed."
+  value       = try(module.monitoring[0].alert_topic_arn, null)
+}
+
+output "monitoring_alarm_names" {
+  description = "CloudWatch alarm names when monitoring is deployed."
+  value       = try(module.monitoring[0].alarm_names, null)
+}
